@@ -116,7 +116,7 @@ void reajustar(No *nulo,No **raiz){
     reajustar(nulo,raiz);
     return;
   }//caso 4
-  if(cor(nulo->pai)==VERMELHO && cor(irmao(nulo))==PRETO&&cor(irmao(nulo)->esq)==PRETO&&cor(irmao(nulo)->dir)==PRETO){
+  if(cor(nulo->pai)==VERMELHO && cor(irmao(nulo))==PRETO&&cor(irmao(nulo)->esq)==PRETO &&cor(irmao(nulo)->dir)==PRETO){
     irmao(nulo)->cor = VERMELHO;
     nulo->pai->cor = PRETO;
     if(e_filho_esq(nulo)){nulo->pai->esq = NULL;}//caso 4a
@@ -138,7 +138,7 @@ void reajustar(No *nulo,No **raiz){
     reajustar(nulo,raiz);
     return;
   }//caso 6a
-  if(e_filho_esq(nulo) && cor(irmao(nulo))==PRETO && cor(irmao(nulo)->dir)==VERMELHO){
+  if(e_filho_esq(nulo) && cor(irmao(nulo)) == PRETO && cor(irmao(nulo)->dir) == VERMELHO){
     irmao(nulo)->cor = nulo->pai->cor;
     irmao(nulo)->dir->cor = PRETO;
     nulo->pai->cor = PRETO;
@@ -147,7 +147,7 @@ void reajustar(No *nulo,No **raiz){
     free(nulo);
     return;
   }//caso 6b
-  if(!(e_filho_esq(nulo)) && cor(irmao(nulo))==PRETO && cor(irmao(nulo)->esq)==VERMELHO){
+  if(!(e_filho_esq(nulo)) && cor(irmao(nulo)) == PRETO && cor(irmao(nulo)->esq) == VERMELHO){
     irmao(nulo)->cor = nulo->pai->cor;
     irmao(nulo)->esq->cor = PRETO;
     nulo->pai->cor = PRETO;
@@ -215,6 +215,7 @@ No* criar_no(int valor,No* pai){
   no->dir = NULL;
   return no;
 }
+
 void adicionar(No **raiz, int valor){
   No *temp = *raiz;
   No *pai = NULL;
@@ -245,10 +246,23 @@ void remover(No **raiz,int valor){
     if(valor > temp->valor){temp = temp->dir;}
     else{temp = temp->esq;}
   }
-  if(no == NULL){return;}
+
+  if(no == NULL){return;}//elemento nao existe
   if(cor(no) == VERMELHO){
     if(e_filho_esq(no)){
-      if(no->dir == NULL){
+      if(no->dir != NULL && no->esq != NULL){//No VERMELHO com 2 filhos
+        no->valor = maior_elemento(no->esq)->valor;
+        remover(&(no->esq),no->valor);
+        return;
+      }
+      if(no->dir != NULL){//NO VERMELHO possui apenas filho direito
+        no->pai->esq = no->dir;
+        no->dir->pai = no->pai;
+        no->dir->cor = no->cor;
+        free(no);
+        return;
+      }
+      else{//NO VERMELHO possui apenas filho esquerdo ou nenhum
         no->pai->esq = no->esq;
         if(no->esq != NULL){
           no->esq->pai = no->pai;
@@ -257,119 +271,110 @@ void remover(No **raiz,int valor){
         free(no);
         return;
       }
-      if(no->esq == NULL){
-        no->pai->esq = no->dir;
-        no->dir->pai = no->pai;
-        no->dir->cor = no->cor;
-        free(no);
-        return;
-      }
-      else{
-        No* maior_esq = maior_elemento(no->esq);
-
-        no->valor = maior_esq->valor;
-        maior_esq->valor = valor;
-        remover(&(no->esq),valor);
-        return;
-      }
     }
     else{//Nó VERMELHO e filho direito
-      if(no->dir == NULL){
-        no->pai->dir = no->esq;
-        if(no->esq != NULL){
-          no->esq->pai = no->pai;
-          no->esq->cor = no->cor;
-        }
-        free(no);
+      if(no->dir != NULL && no->esq != NULL){//No VERMELHO com 2 filhos
+        no->valor = maior_elemento(no->esq)->valor;
+        remover(&(no->esq),no->valor);
         return;
       }
-      if(no->esq == NULL){
+      if(no->dir != NULL){//NO VERMELHO possui apenas filho direito
         no->pai->dir = no->dir;
         no->dir->pai = no->pai;
         no->dir->cor = no->cor;
         free(no);
         return;
       }
-      else{
-        No* maior_esq = maior_elemento(no->esq);
-
-        no->valor = maior_esq->valor;
-        maior_esq->valor = valor;
-        remover(&(no->esq),valor);
+      else{//NO VERMELHO possui apenas filho esquerdo ou nenhum
+        no->pai->dir = no->esq;
+        if(no->esq != NULL){
+          no->esq->pai = no->pai;
+          no->esq->cor = no->cor;
+        }
+        free(no);
         return;
       }
     }
   }
   else{//No a ser removido é PRETO
     if(e_raiz(no)){//para evitar erro de segmentacao quando for atualisar os ponteiros esq e dir do pai do elemento
-      if(no->dir == NULL && no->esq == NULL){
-        No *nulo = criar_nulo(no->pai);
-        *raiz = nulo;
-        reajustar(nulo,raiz);
+      if(no->esq != NULL && no->dir != NULL){//NO possui 2 filhos
+          no->valor = maior_elemento(no->esq)->valor;
+          remover(&(no->esq),no->valor);
+          return;
+      }
+      if(no->dir != NULL){//NO possui apenas filho direito
+        *raiz = no->dir;
+        no->dir->pai = no->pai;
+        no->dir->cor = PRETO;
         free(no);
         return;
       }
-      else{
-        if(no->esq != NULL){
-          No *maior_esq = maior_elemento(no->esq);
-
-          no->valor = maior_esq->valor;
-          maior_esq->valor = valor;
-          remover(&(no->esq),valor);
-          return;
-        }
-        else{
-          No *menor_dir = menor_elemento(no->dir);
-
-          no->valor = menor_dir->valor;
-          menor_dir->valor = valor;
-          remover(&(no->dir),valor);
-          return;
-        }
+      if(no->esq != NULL){//NO possui apenas filho esquerdo
+        *raiz = no->esq;
+        no->esq->pai = no->pai;
+        no->esq->cor = PRETO;
       }
+      else{//NO preto sem filhos
+        *raiz = criar_nulo(no->pai);
+        reajustar(*raiz,raiz);
+      }
+      free(no);
+      return;
     }
     if(e_filho_esq(no)){//Não é raiz e é preto
-      if(no->dir == NULL && no->esq == NULL){
-        No *nulo = criar_nulo(no->pai);
-        no->pai->esq = nulo;
-        reajustar(nulo,raiz);
+      if(no->dir != NULL && no->esq != NULL){//No possui 2 filhos
+        no->valor = maior_elemento(no->esq)->valor;
+        remover(&(no->esq),no->valor);
         return;
       }
-      if(no->dir == NULL){
+      if(no->esq != NULL){//NO possui apenas filho esquerdo
         no->pai->esq = no->esq;
         no->esq->cor = no->cor;
         no->esq->pai = no->pai;
         free(no);
         return;
       }
-      else{
+      if(no->dir != NULL){//NO possui apenas filho direito
         no->pai->esq = no->dir;
         no->dir->cor = no->cor;
         no->esq->pai = no->pai;
         free(no);
         return;
       }
-    }
-    else{//Nó PRETO e direito
-      if(no->dir == NULL && no->esq == NULL){
+      else{//NO nao possui filhos
         No *nulo = criar_nulo(no->pai);
-        no->pai->dir = nulo;
+        no->pai->esq = nulo;
         reajustar(nulo,raiz);
         return;
       }
-      if(no->dir == NULL){
+    }
+    else{//Nó PRETO e direito
+      if(no->dir != NULL && no->esq != NULL){//No possui 2 filhos
+        no->valor = maior_elemento(no->esq)->valor;
+        remover(&(no->esq),no->valor);
+        return;
+      }
+      if(no->esq != NULL){//NO possui apenas filho esquerdo
         no->pai->dir = no->esq;
         no->esq->cor = no->cor;
         no->esq->pai = no->pai;
         free(no);
         return;
       }
-      else{
+      if(no->dir != NULL){//NO possui apenas filho direito
         no->pai->dir = no->dir;
         no->dir->cor = no->cor;
         no->dir->pai = no->pai;
         free(no);
         return;
+      }
+      else{
+        //NO nao possui filhos
+          No *nulo = criar_nulo(no->pai);
+          no->pai->dir = nulo;
+          reajustar(nulo,raiz);
+          return;
       }
     }
   }
