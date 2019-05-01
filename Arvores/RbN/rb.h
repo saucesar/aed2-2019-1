@@ -20,6 +20,7 @@ No* irmao(No *no);
 void exibir_pre_order(No *raiz);
 void ajustar(No *no,No **raiz);
 void reajustar(No *no,No **raiz);
+No* criar_no(int valor,No* pai);
 void adicionar(No **raiz, int valor);
 void remover(No **raiz,int valor);
 void rotacao_simples_direita(No *pivo,No **raiz);

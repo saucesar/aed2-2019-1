@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "rubro_negra.h"
+#include "rb.h"
 
 int main(int argc,char* argv[]){
   No *raiz = NULL;
