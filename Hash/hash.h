@@ -1,6 +1,13 @@
 #ifndef HASH
 #define HASH
-#define MAX 7
+#define MAX 13
+
+typedef struct livro {
+    int isbn;
+    char *titulo;
+    char *autor;
+    char *editora;
+}Livro;
 
 typedef struct no_encad{
   int chave;
@@ -23,8 +30,13 @@ typedef struct tabela_hash{
 int hash(int chave);
 Tabela* startTabela(char *dados,char *indices);
 void salvar_indices(Tabela *tab);
-void finalizar (Tabela *tab);
+void finalizar(Tabela *tab);
 int buscar_indice(Tabela *tab, int chave);
+
+char* tirar_enter(char *string);
+Livro* ler_livro();
+void imprimir_livro(Livro *l);
+int salvar_livro(Tabela *tab, Livro * livro);
 
 No* buscar_na_lista(Lista *lista, int chave);
 No* startNo(int chave, int refer, No* proximo);

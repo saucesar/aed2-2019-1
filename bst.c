@@ -10,7 +10,7 @@ void inicializar(arvore *raiz) {
 }
 
 int inicializarTabela(tabela *tab) {
-	inicializar(&tab->indices);	
+	inicializar(&tab->indices);
 	tab->arquivo_dados = fopen("dados.dat", "a+b");
 	tab->indices = carregar_arquivo("indices.dat", tab->indices);
 	if(tab->arquivo_dados != NULL)
@@ -39,7 +39,6 @@ void adicionarLivro(tabela *tab, dado *livro){
 			tab->indices = adicionar(novo, tab->indices);
 	}
 }
-
 
 arvore adicionar (tipo_dado *valor, arvore raiz) {
 	if(raiz == NULL) {
@@ -124,10 +123,10 @@ void imprimir_elemento(arvore raiz, tabela * tab) {
 }
 
 arvore remover (int valor, arvore raiz) {
-	if(raiz == NULL) 
+	if(raiz == NULL)
 		return NULL;
-	
-	if(raiz->dado->chave == valor) {		
+
+	if(raiz->dado->chave == valor) {
 		if(raiz->esq == NULL) {
 			return raiz->dir;
 		}
@@ -137,7 +136,7 @@ arvore remover (int valor, arvore raiz) {
 		raiz->dado = maior_elemento(raiz->esq);
 		raiz->esq = remover(raiz->dado->chave, raiz->esq);
 		return raiz;
-	}	
+	}
 	if(valor > raiz->dado->chave) {
 			raiz->dir = remover(valor, raiz->dir);
 	} else {
@@ -193,8 +192,8 @@ arvore carregar_arquivo(char *nome, arvore a) {
 	if(arq != NULL) {
 		temp = (tipo_dado *) malloc(sizeof(tipo_dado));
 		while(fread(temp, sizeof(tipo_dado), 1, arq)) {
-			
-			a = adicionar(temp, a);			
+
+			a = adicionar(temp, a);
 			temp = (tipo_dado *) malloc(sizeof(tipo_dado));
 
 		}

@@ -58,6 +58,88 @@ void salvar_indices(Tabela *tab){
   fclose(tab->indices);
 }
 
+char* tirar_enter(char *string){
+	string[strlen(string) -1] = '\0';
+  return string;
+}
+
+Livro * ler_livro(){
+  Livro *novo = (livro *) malloc(sizeof(livro));
+  char *buffer = (char *) malloc(sizeof(char) * 256);
+
+  printf ("DIGITE O ISBN: ");
+  scanf("%d", &novo->isbn);
+	getchar();
+
+  printf ("DIGITE O TITULO: ");
+  fgets(buffer, 256, stdin);
+  novo->titulo = strdup(tirar_enter(buffer));
+
+  printf ("DIGITE O AUTOR: ");
+  fgets(buffer, 256, stdin);
+  novo->autor = strdup(tirar_enter(buffer));
+
+  printf ("DIGITE A EDITORA: ");
+  fgets(buffer, 256, stdin);
+  novo->editora = strdup(tirar_enter(buffer));
+
+  free(buffer);
+  return novo;
+}
+
+void imprimir_livro(Livro *l){
+    printf("ISBN: %d\n", l->isbn);
+    printf("TITULO: %s\n", l->titulo);
+    printf("AUTOR: %s\n", l->autor);
+    printf("EDITORA: %s\n", l->editora);
+}
+
+int salvar_livro(Tabela *tab, Livro * livro){
+  fseek(tab->dados, 0, SEEK_END);
+  int fim = ftell(tabela->dados);
+
+  fprintf(tabela->dados, "%d|", livro->isbn);
+  fprintf(tabela->dados, "%s|", livro->titulo);
+  fprintf(tabela->dados, "%s|", livro->autor);
+  fprintf(tabela->dados, "%s|", livro->editora);
+
+  return fim;
+}
+
+char* ler_campo(Tabela *tab){
+  char* buffer = malloc(sizeof(char) * 256);
+
+  for(int i = 0; i < 256; i++) {
+    buffer[i] = fgetc(tab->dados);
+    if(buffer[i] == '|') {
+      buffer[i] = '\0';
+      break;
+    }
+  }
+  return buffer;
+}
+
+Livro* ler_livro_arquivo(Tabela *tab, int posicao) {
+  Livro* livro = (Livro*) malloc(sizeof(Livro));
+  fseek(tab->dados, posicao, SEEK_SET);
+
+  livro->isbn = atoi(ler_campo(tabela->dados));
+  livro->titulo = strdup(ler_campo(tabela->dados));
+  livro->autor = strdup(ler_campo(tabela->dados));
+  livro->editora = strdup(ler_campo(tabela->dados));
+
+  return novo;
+}
+
+void adicionar_livro(Tabela *tab, Livro *livro) {
+  int posicao = salvar_livro(tab, livro);
+  adicionar_indice(tab,livro->isbn,posicao);
+}
+
+void adicionar_indice(Tabela *tab, int chave, int ref){
+  adic_no_inicio(tab->lista_indices[hash(chave)],chave,ref);
+}
+
 No* startNo(int chave, int refer, No* proximo){
   No *novo = malloc(sizeof(No));
   novo->chave = chave;
@@ -73,7 +155,8 @@ Lista* startLista(){
 }
 
 void adic_no_inicio(Lista *lista, int chave, int refer){
-  lista->primeiro = startNo(chave,refer,lista->primeiro);
+  No *novo = startNo(chave,refer,lista->primeiro);
+  lista->primeiro = novo;
 }
 
 void remover(Lista *lista, int chave){
