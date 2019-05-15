@@ -44,7 +44,8 @@ void menu(Tabela *tab){
 }
 
 int hash(int chave){
-  return (chave % MAX);
+  int res = (chave*29)% MAX)
+  return res;
 }
 
 Tabela* startTabela(char *dados,char *indices){
