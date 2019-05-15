@@ -2,9 +2,10 @@
 #include <stdio.h>
 #include "lista_encad.h"
 
-No* startNo(int valor,No* proximo){
+No* startNo(int valor,int refer,No* proximo){
   No *novo = malloc(sizeof(No));
   novo->valor = valor;
+  novo->ref = refer;
   novo->prox = proximo;
   return novo;
 }
@@ -15,17 +16,8 @@ Lista* startLista(){
   return lista;
 }
 
-void exibir_lista(Lista *lista){
-  No* temp = lista->primeiro;
-  while (temp != NULL) {
-    printf("[%d] ", temp->valor);
-    temp = temp->prox;
-  }
-  printf("\n");
-}
-
-void adic_no_inicio(Lista *lista, int valor){
-  lista->primeiro = startNo(valor,lista->primeiro);
+void adic_no_inicio(Lista *lista, int refer,int valor){
+  lista->primeiro = startNo(valor,refer,lista->primeiro);
 }
 
 void remover(Lista *lista, int valor){

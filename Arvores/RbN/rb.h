@@ -11,16 +11,18 @@ typedef struct noRbN{
 }No;
 
 Cor cor(No *no);
+
 Boolean e_raiz(No *no);
 Boolean e_filho_esq(No *no);
+
 No* maior_elemento(No *raiz);
-No* menor_elemento(No *raiz);
 No* criar_nulo(No *pai);
+No* criar_no(int valor,No* pai);
 No* irmao(No *no);
+
 void exibir_pre_order(No *raiz);
 void ajustar(No *no,No **raiz);
 void reajustar(No *no,No **raiz);
-No* criar_no(int valor,No* pai);
 void adicionar(No **raiz, int valor);
 void remover(No **raiz,int valor);
 void rotacao_simples_direita(No *pivo,No **raiz);
