@@ -15,16 +15,12 @@ typedef struct no_encad{
   struct no_encad *prox;
 }No;
 
-typedef struct lista_encad{
-  No *primeiro;
-}Lista;
-
 typedef struct tabela_hash{
   char* arquivo_dados;
   char*arquivo_indices;
   FILE *dados;
   FILE *indices;
-  Lista* lista_indices[MAX];
+  No* lista_indices[MAX];
 }Tabela;
 
 int hash(int chave);
@@ -35,13 +31,18 @@ int buscar_indice(Tabela *tab, int chave);
 
 char* tirar_enter(char *string);
 Livro* ler_livro();
-void imprimir_livro(Livro *l);
+char* ler_campo(FILE *dados);
+Livro* ler_livro_arquivo(Tabela *tab, int posicao);
+void adicionar_livro(Tabela *tab, Livro *livro);
+void remover_da_tabela(Tabela *tab, int chave);
+void adicionar_indice(Tabela *tab, int chave, int ref);
+void exibir_livro(Livro *l);
+void exibir_tabela(Tabela *tab);
 int salvar_livro(Tabela *tab, Livro * livro);
 
-No* buscar_na_lista(Lista *lista, int chave);
-No* startNo(int chave, int refer, No* proximo);
-Lista* startLista();
-void adic_no_inicio(Lista *lista, int chave, int refer);
-void remover(Lista *lista, int valor);
+No* buscar_na_lista(No *no, int chave);
+No* startNo(int chave, int refer, No *proximo);
+No* adic_no_inicio(No *proximo, int chave, int refer);
+No* remover_da_lista(No *inicial, int chave);
 
 #endif
