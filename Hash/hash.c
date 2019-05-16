@@ -44,7 +44,7 @@ void menu(Tabela *tab){
 }
 
 int hash(int chave){
-  int res = (chave*29)% MAX)
+  int res = (chave*29)% MAX;
   return res;
 }
 
@@ -111,7 +111,6 @@ void exibir_tabela(Tabela *tab){
     No *temp = tab->lista_indices[i];
     while (temp != NULL) {
       exibir_livro(ler_livro_arquivo(tab,temp->ref));
-      //printf("CHAVE: %d REFER: %d\n",temp->chave,temp->ref);
       temp = temp->prox;
     }
   }
@@ -129,15 +128,15 @@ int salvar_livro(Tabela *tab, Livro *livro){
 
   fwrite(&livro->isbn, sizeof(int),1,tab->dados);
 
-  tamanho_campo = sizeof(livro->titulo);
+  tamanho_campo = strlen(livro->titulo);
   fwrite(&tamanho_campo, sizeof(int), 1, tab->dados);
   fwrite(livro->titulo, tamanho_campo, 1, tab->dados);
 
-  tamanho_campo = sizeof(livro->autor);
+  tamanho_campo = strlen(livro->autor);
   fwrite(&tamanho_campo, sizeof(int), 1, tab->dados);
   fwrite(livro->autor, tamanho_campo, 1, tab->dados);
 
-  tamanho_campo = sizeof(livro->editora);
+  tamanho_campo = strlen(livro->editora);
   fwrite(&tamanho_campo, sizeof(int), 1, tab->dados);
   fwrite(livro->editora, tamanho_campo, 1, tab->dados);
 
