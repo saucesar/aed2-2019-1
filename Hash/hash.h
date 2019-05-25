@@ -17,23 +17,24 @@ typedef struct no_encad{
 
 typedef struct tabela_hash{
   char* arquivo_dados;
-  char*arquivo_indices;
+  char* arquivo_indices;
   FILE *dados;
   FILE *indices;
   No* lista_indices[MAX];
 }Tabela;
 
 void menu();
+
 int hash(int chave);
+int buscar_refer(Tabela *tab, int chave);
 Tabela* startTabela(char *dados,char *indices);
 void salvar_indices(Tabela *tab);
 void finalizar(Tabela *tab);
-int buscar_indice(Tabela *tab, int chave);
 
 char* tirar_enter(char *string);
-Livro* ler_livro();
 char* ler_campo(FILE *dados);
 Livro* ler_livro_arquivo(Tabela *tab, int posicao);
+Livro* ler_livro();
 void adicionar_livro(Tabela *tab, Livro *livro);
 void remover_da_tabela(Tabela *tab, int chave);
 void editar(Tabela *tab,int chave);

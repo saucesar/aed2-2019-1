@@ -58,11 +58,7 @@ Tabela* startTabela(char *dados,char *indices){
 
   for(int i = 0;i<MAX;i++){ tab->lista_indices[i] = NULL;}
 
-  if(tab->indices == NULL){
-    tab->indices = fopen(tab->arquivo_indices, "a+b");
-    fclose(tab->indices);
-    tab->indices = fopen(tab->arquivo_indices, "r+b");
-  }
+  if(tab->indices == NULL){tab->indices = fopen(tab->arquivo_indices, "a+b");}
 
   int chave,ref;
   if(tab->dados != NULL && tab->indices != NULL){
@@ -71,6 +67,7 @@ Tabela* startTabela(char *dados,char *indices){
       tab->lista_indices[posicao] = adic_no_inicio(tab->lista_indices[posicao], chave, ref);
     }
     fclose(tab->indices);
+    printf("====== TABELA INICIADA COM SUCESSO !!! =====\n");
     return tab;
   }else{
     if(tab->dados == NULL) printf("NÃO FOI POSSIVEL ABRIR O ARQUIVO \"%s\" \n",tab->arquivo_dados);
@@ -80,8 +77,11 @@ Tabela* startTabela(char *dados,char *indices){
 }
 
 void adicionar_livro(Tabela *tab, Livro *livro){
-  int posicao = salvar_livro(tab, livro);
-  adicionar_indice(tab,livro->isbn,posicao);
+  if(buscar_na_lista(tab->lista_indices[hash(livro->isbn)],livro->isbn) == NULL){
+    int posicao = salvar_livro(tab, livro);
+    adicionar_indice(tab,livro->isbn,posicao);
+  }
+  else{printf("\n========== ISBN JA CADASTRADO !!! ==========\n");}
 }
 
 void adicionar_indice(Tabela *tab, int chave, int ref){
@@ -95,7 +95,7 @@ void remover_da_tabela(Tabela *tab, int chave){
 }
 
 void editar(Tabela *tab,int chave){
-  int posicao = buscar_indice(tab,chave);
+  int posicao = buscar_refer(tab,chave);
   if(posicao != -1){
       Livro *antigo = ler_livro_arquivo(tab,posicao);
       exibir_livro(antigo);
@@ -117,7 +117,7 @@ void exibir_tabela(Tabela *tab){
 }
 
 void buscar_na_tabela(Tabela *tab,int chave){
-  int posicao = buscar_indice(tab,chave);
+  int posicao = buscar_refer(tab,chave);
   if(posicao != -1){ exibir_livro(ler_livro_arquivo(tab,posicao));}
 }
 
@@ -143,7 +143,7 @@ int salvar_livro(Tabela *tab, Livro *livro){
   return fim;
 }
 
-int buscar_indice(Tabela *tab, int chave){
+int buscar_refer(Tabela *tab, int chave){
   No *no = buscar_na_lista(tab->lista_indices[hash(chave)],chave);
   if(no != NULL){return no->ref;}
   else{ return -1;}
@@ -185,22 +185,6 @@ Livro* ler_livro_arquivo(Tabela *tab, int posicao){
   return livro;
 }
 
-char* ler_campo(FILE *dados){
-  int tamanho_campo;
-
-  fread(&tamanho_campo, sizeof(int), 1, dados);
-  int tam = (tamanho_campo*sizeof(char))+1;
-  char* buffer = (char*)malloc(tam);
-  fread(buffer, tamanho_campo, 1, dados);
-  buffer[tam-1] = '\0';
-  return buffer;
-}
-
-char* tirar_enter(char *string){
-	string[strlen(string) -1] = '\0';
-  return string;
-}
-
 Livro* ler_livro(){
   Livro *novo = (Livro *) malloc(sizeof(Livro));
   char *buffer = (char *) malloc(sizeof(char) * 256);
@@ -225,6 +209,22 @@ Livro* ler_livro(){
   return novo;
 }
 
+char* ler_campo(FILE *dados){
+  int tamanho_campo;
+
+  fread(&tamanho_campo, sizeof(int), 1, dados);
+  int tam = (tamanho_campo*sizeof(char))+1;
+  char* buffer = (char*)malloc(tam);
+  fread(buffer, tamanho_campo, 1, dados);
+  buffer[tam-1] = '\0';
+  return buffer;
+}
+
+char* tirar_enter(char *string){
+	string[strlen(string) -1] = '\0';
+  return string;
+}
+
 void exibir_livro(Livro *livro){
   if(livro != NULL){
     printf("ISBN: %d\n", livro->isbn);
@@ -235,7 +235,7 @@ void exibir_livro(Livro *livro){
 }
 
 No* startNo(int chave, int refer, No *proximo){
-  No *novo = malloc(sizeof(No));
+  No *novo = (No*)malloc(sizeof(No));
   novo->chave = chave;
   novo->ref = refer;
   novo->prox = proximo;
@@ -259,6 +259,8 @@ No* remover_da_lista(No *inicial, int chave){
     if(anterior == NULL){ inicial = temp->prox;}
     else{ anterior->prox = temp->prox;}
     free(temp);
+    printf("============ LIVRO REMOVIDO !!! ============\n");
   }
+  else{ printf("========== ISBN NAO ENCONTRADO !!! =========\n");}
   return inicial;
 }
