@@ -4,7 +4,6 @@
 
 int main(int argc, char const *argv[]) {
   Tabela *tab = startTabela("dados.dat","indices.dat");
-  printf("====== TABELA INICIADA COM SUCESSO !!! =====\n");
   menu(tab);
   return 0;
 }
