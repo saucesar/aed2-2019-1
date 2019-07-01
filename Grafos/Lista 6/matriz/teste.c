@@ -5,5 +5,6 @@
 int main(int argc, char const *argv[]) {
   Grafo *g = start_grafo();
   exibir_grafo(g);
+  busca_largura(g,'A','D');
   return 0;
 }
